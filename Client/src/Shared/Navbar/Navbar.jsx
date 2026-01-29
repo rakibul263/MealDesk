@@ -2,7 +2,7 @@ import { Link } from "react-router";
 
 const Navbar = () => {
   return (
-    <div className="navbar bg-base-100 shadow-md px-4">
+    <div className="navbar shadow-md px-4 max-w-[90%] mx-auto rounded-br-2xl rounded-bl-2xl bg-[#F5FAE1]">
       <div className="navbar-start">
         <div className="dropdown">
           <label tabIndex={0} className="btn btn-ghost lg:hidden">
@@ -36,9 +36,9 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <Link to="/" className="btn btn-ghost text-xl font-bold text-primary">
-          MealDesk
-        </Link>
+        <div>
+          <img src="/logo.png" alt="MealDesk" className="w-12" />
+        </div>
       </div>
 
       <div className="navbar-center hidden lg:flex">
@@ -55,8 +55,7 @@ const Navbar = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        {/* <input type="checkbox" defaultChecked className="toggle" /> */}
-        <Link to="/login" className="btn btn-primary btn-sm">
+        <Link to="/login" className="btn bg-[#7D8D86] text-white rounded-2xl">
           Login
         </Link>
       </div>

@@ -3,10 +3,10 @@ import { FaFacebookF, FaInstagram, FaTwitter, FaGithub } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-base-200 text-base-content">
+    <footer className="bg-[#F5FAE1] text-base-content ">
       <div className="footer max-w-7xl mx-auto p-10 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
-          <h2 className="text-2xl font-bold text-primary">MealDesk</h2>
+          <img src="/logo.png" alt="MealDesk" className="w-20" />
           <p className="mt-2 text-sm">
             Smart restaurant management solution to manage orders, menus, and
             staff efficiently.
