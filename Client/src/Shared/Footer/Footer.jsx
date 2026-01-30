@@ -3,7 +3,7 @@ import { FaFacebookF, FaInstagram, FaTwitter, FaGithub } from "react-icons/fa";
 
 const Footer = () => {
   return (
-    <footer className="bg-[#F5FAE1] text-base-content ">
+    <footer className="bg-[#F5FAE1] text-base-content border-t-1 border-[#896C6C] rounded-tl-2xl rounded-tr-2xl">
       <div className="footer max-w-7xl mx-auto p-10 grid grid-cols-1 md:grid-cols-3 gap-6">
         <div>
           <img src="/logo.png" alt="MealDesk" className="w-20" />
