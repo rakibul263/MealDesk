@@ -3,7 +3,7 @@ import Banner from "../components/Banner";
 
 const Home = () => {
   return (
-    <div className="max-w-[90%] mx-auto mt-2">
+    <div className="max-w-[90%] mx-auto pt-2 pb-2">
       <Banner></Banner>
     </div>
   );
