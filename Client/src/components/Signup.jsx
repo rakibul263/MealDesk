@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { use, useContext, useState } from "react";
 import { Link } from "react-router";
+import { AuthContext } from "../context/AuthContext";
+import Swal from "sweetalert2";
 
 const Signup = () => {
   const [error, setError] = useState("");
+  const { createUser } = use(AuthContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -31,7 +34,21 @@ const Signup = () => {
       setError("Password must contain at least one lowercase letter.");
       return;
     }
-    console.log({ name, email, photoURL, password });
+    createUser(email, password)
+      .then((res) => {
+        Swal.fire({
+          title: "Created Account Successfully.",
+          text: "Thank You For Joining Us.",
+          icon: "success",
+        });
+      })
+      .catch((error) => {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Something went wrong! Try Again.",
+        });
+      });
   };
 
   return (
