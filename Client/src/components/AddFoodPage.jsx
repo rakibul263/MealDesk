@@ -3,6 +3,7 @@ import { AuthContext } from "../context/AuthContext";
 
 const AddFoodPage = () => {
   const { user, setLoading, loading } = useContext(AuthContext);
+  console.log(user);
 
   const handleAddFood = async (e) => {
     e.preventDefault();

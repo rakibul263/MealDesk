@@ -1,12 +1,13 @@
 import React, { use, useContext, useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import Swal from "sweetalert2";
 import { updateProfile } from "firebase/auth";
 
 const Signup = () => {
   const [error, setError] = useState("");
-  const { createUser } = use(AuthContext);
+  const { createUser, verifiedEmail } = use(AuthContext);
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -42,11 +43,21 @@ const Signup = () => {
           displayName: name,
           photoURL: photoURL,
         });
-        Swal.fire({
-          title: "Created Account Successfully.",
-          text: "Thank You For Joining Us.",
-          icon: "success",
-        });
+        verifiedEmail()
+          .then((res) => {
+            Swal.fire({
+              title: "Please Verify Your Account",
+              text: "We send a mail on your mail address.",
+              icon: "success",
+            });
+            navigate("/login");
+          })
+          .catch((error) => {
+            Swal.fire({
+              title: "Something want wrong",
+              icon: "error",
+            });
+          });
       })
       .catch((error) => {
         Swal.fire({

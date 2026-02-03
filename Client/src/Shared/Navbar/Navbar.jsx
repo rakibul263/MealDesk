@@ -1,9 +1,19 @@
 import { use } from "react";
-import { Link, NavLink } from "react-router";
+import { Link, NavLink, useNavigate } from "react-router";
 import { AuthContext } from "../../context/AuthContext";
 
 const Navbar = () => {
   const { user, signOutUser } = use(AuthContext);
+  const Navigate = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOutUser()
+      .then(() => {
+        Navigate("/login");
+      })
+      .catch(() => {});
+  };
+
   const links = (
     <>
       <li>
@@ -62,7 +72,7 @@ const Navbar = () => {
         <ul className="menu menu-horizontal px-1">{links}</ul>
       </div>
       <div className="navbar-end">
-        {user ? (
+        {user?.emailVerified ? (
           <div className="dropdown dropdown-end">
             <div
               tabIndex={0}
@@ -78,13 +88,11 @@ const Navbar = () => {
               className="menu menu-sm dropdown-content  rounded-box z-1 mt-3 w-52 p-2 shadow bg-[#D6CFB6]"
             >
               <li>
-                <a className="justify-between">Profile</a>
+                <a className="justify-between" href="/profile">
+                  Profile
+                </a>
               </li>
-              <li
-                onClick={() => {
-                  signOutUser();
-                }}
-              >
+              <li onClick={handleSignOut}>
                 <a>Logout</a>
               </li>
             </ul>
