@@ -1,11 +1,21 @@
-import { useContext, useState, useEffect, use } from "react";
+import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Swal from "sweetalert2";
 import { updateProfile } from "firebase/auth";
 import { useNavigate } from "react-router";
+import {
+  IoCameraOutline,
+  IoMailOutline,
+  IoCalendarOutline,
+  IoShieldCheckmarkOutline,
+  IoTrashOutline,
+  IoCreateOutline,
+  IoRestaurantOutline,
+} from "react-icons/io5";
 
 const Profile = () => {
-  const { user, loading, refreshUser, deleteUserAccount } = use(AuthContext);
+  const { user, loading, refreshUser, deleteUserAccount } =
+    useContext(AuthContext);
   const [localUser, setLocalUser] = useState(null);
   const Navigate = useNavigate();
 
@@ -15,28 +25,31 @@ const Profile = () => {
 
   if (loading || !localUser) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <span className="loading loading-ring loading-xl"></span>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-[#FFFBF0]">
+        <span className="loading loading-spinner loading-lg text-[#E67E22]"></span>
       </div>
     );
   }
 
   const handleEditProfile = async () => {
     const { value: formValues } = await Swal.fire({
-      title: "Edit Profile",
+      title: "<span style='color:#5D4037'>Update Profile</span>",
       html: `
-        <input type="text" id="swal-name" class="swal2-input" placeholder="Full Name" value="${localUser.displayName || ""}">
-        <input type="text" id="swal-photo" class="swal2-input" placeholder="Photo URL" value="${localUser.photoURL || ""}">
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <input type="text" id="swal-name" class="swal2-input" style="margin:0; border-radius:12px;" placeholder="Full Name" value="${localUser.displayName || ""}">
+          <input type="text" id="swal-photo" class="swal2-input" style="margin:0; border-radius:12px;" placeholder="Photo URL" value="${localUser.photoURL || ""}">
+        </div>
       `,
       showCancelButton: true,
-      confirmButtonColor: "#A3B18A",
-      confirmButtonText: "Update",
-      focusConfirm: false,
+      confirmButtonColor: "#E67E22",
+      cancelButtonColor: "#5D4037",
+      confirmButtonText: "Save Changes",
+      customClass: { popup: "rounded-[2rem]" },
       preConfirm: () => {
         const name = document.getElementById("swal-name").value;
         const photoURL = document.getElementById("swal-photo").value;
         if (!name || !photoURL)
-          Swal.showValidationMessage("Please enter both name and photo URL");
+          Swal.showValidationMessage("Both fields are required");
         return { name, photoURL };
       },
     });
@@ -51,16 +64,15 @@ const Profile = () => {
         if (refreshUser) refreshUser();
         Swal.fire({
           icon: "success",
-          confirmButtonColor: "#A3B18A",
           title: "Profile Updated",
-          text: "Your profile has been updated successfully.",
+          confirmButtonColor: "#E67E22",
         });
       } catch (error) {
         Swal.fire({
           icon: "error",
-          confirmButtonColor: "#A3B18A",
-          title: "Update Failed",
-          text: "Something went wrong. Please try again.",
+          title: "Oops!",
+          text: "Update failed",
+          confirmButtonColor: "#E67E22",
         });
       }
     }
@@ -68,20 +80,14 @@ const Profile = () => {
 
   const handleDelete = async () => {
     Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      title: "Delete Account?",
+      text: "This action cannot be undone!",
       icon: "warning",
-      confirmButtonColor: "#A3B18A",
       showCancelButton: true,
-      customClass: {
-        confirmButton:
-          "bg-gradient-to-r from-[#DCE1CB] to-[#A3B18A] text-white rounded-xl hover:scale-[1.02] transition-transform duration-300",
-        cancelButton:
-          "bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-300",
-      },
-      confirmButtonText: "Yes, delete it!",
-      cancelButtonText: "Cancel",
-      reverseButtons: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#5D4037",
+      confirmButtonText: "Yes, Delete",
+      customClass: { popup: "rounded-[2rem]" },
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -89,22 +95,15 @@ const Profile = () => {
           Navigate("/");
           Swal.fire({
             title: "Deleted!",
-            confirmButtonColor: "#A3B18A",
-            text: "Your account has been deleted.",
             icon: "success",
-            customClass: {
-              popup: "rounded-3xl shadow-2xl",
-            },
+            confirmButtonColor: "#E67E22",
           });
         } catch (error) {
           Swal.fire({
-            title: "Error!",
-            confirmButtonColor: "#A3B18A",
-            text: "Something went wrong. Try again.",
+            title: "Error",
+            text: "Something went wrong",
             icon: "error",
-            customClass: {
-              popup: "rounded-3xl shadow-2xl",
-            },
+            confirmButtonColor: "#E67E22",
           });
         }
       }
@@ -112,76 +111,107 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="bg-white/80 backdrop-blur-lg shadow-2xl rounded-2xl max-w-md w-full p-6 relative overflow-hidden">
-        <div className="absolute -top-16 -right-16 w-40 h-40 bg-gradient-to-br from-pink-400 to-purple-600 rounded-full opacity-30"></div>
-
-        <div className="flex justify-center">
-          <img
-            src={localUser.photoURL}
-            alt="Profile"
-            className="w-28 h-28 rounded-full border-4 border-white shadow-lg object-cover"
-          />
-        </div>
-
-        <h2 className="text-2xl font-bold text-center mt-4 text-gray-800">
-          {localUser.displayName}
-        </h2>
-
-        <p className="text-center text-gray-600 text-sm mt-1">
-          {localUser.email}
-        </p>
-
-        <div className="flex justify-center mt-3">
-          {localUser.emailVerified ? (
-            <span className="px-3 py-1 text-xs rounded-full bg-green-100 text-green-600 font-medium">
-              ✔ Email Verified
-            </span>
-          ) : (
-            <span className="px-3 py-1 text-xs rounded-full bg-red-100 text-red-600 font-medium">
-              ✖ Email Not Verified
-            </span>
-          )}
-        </div>
-
-        <div className="border-t my-5"></div>
-
-        <div className="space-y-3 text-sm text-gray-700">
-          <div className="flex justify-between">
-            <span className="font-medium">User ID</span>
-            <span className="text-gray-500 truncate max-w-[180px]">
-              {localUser.uid}
-            </span>
+    <div className="min-h-screen bg-[#FFFBF0] flex items-center justify-center px-1 py-24 lg:py-32">
+      <div className="max-w-md w-full bg-white rounded-[3rem] shadow-[0_30px_60px_rgba(93,64,55,0.15)] border border-orange-50 mt-10">
+        {/* Banner with Logo */}
+        <div className="h-48 bg-[#5D4037] relative flex flex-col items-center justify-center rounded-t-[3rem] overflow-visible">
+          <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none overflow-hidden rounded-t-[3rem]">
+            <div className="grid grid-cols-6 gap-4 transform -rotate-12 scale-150">
+              {[...Array(24)].map((_, i) => (
+                <IoRestaurantOutline key={i} size={40} className="text-white" />
+              ))}
+            </div>
           </div>
 
-          <div className="flex justify-between">
-            <span className="font-medium">Account Created</span>
-            <span className="text-gray-500">
-              {new Date(localUser.metadata.creationTime).toLocaleDateString()}
-            </span>
+          <div className="z-10 flex flex-col items-center -mt-10">
+            <div className="p-3 bg-white/10 backdrop-blur-md rounded-2xl border border-white/20 mb-2">
+              <IoRestaurantOutline className="text-[#E67E22]" size={32} />
+            </div>
+            <h1 className="text-white font-black tracking-tighter text-xl">
+              MEAL<span className="text-[#E67E22]">DESK</span>
+            </h1>
           </div>
 
-          <div className="flex justify-between">
-            <span className="font-medium">Last Login</span>
-            <span className="text-gray-500">
-              {new Date(localUser.metadata.lastSignInTime).toLocaleDateString()}
-            </span>
+          <div className="absolute -bottom-16 left-1/2 -translate-x-1/2 z-20">
+            <div className="relative">
+              <div className="absolute inset-0  rounded-full blur-md opacity-20"></div>
+              <div className="w-32 h-32 rounded-full border-[6px] border-white shadow-2xl overflow-hidden bg-white">
+                <img
+                  src={localUser.photoURL}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <button
+                onClick={handleEditProfile}
+                className="absolute bottom-1 right-1 bg-[#E67E22] p-2.5 rounded-full text-white shadow-lg hover:scale-110 transition-all border-2 border-white z-30"
+              >
+                <IoCameraOutline size={18} />
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="flex gap-3">
-          <button
-            className="mt-6 w-full py-2 rounded-xl bg-gradient-to-r from-[#DCE1CB] to-[#A3B18A] text-gray-800 font-semibold hover:scale-[1.02] transition-transform duration-300"
-            onClick={handleEditProfile}
-          >
-            Edit Profile
-          </button>
-          <button
-            className="mt-6 w-full py-2 rounded-xl bg-gradient-to-r from-[#A3B18A] to-[#DCE1CB]  text-gray-800 font-semibold hover:scale-[1.02] transition-transform duration-300"
-            onClick={handleDelete}
-          >
-            Delete Account
-          </button>
+        <div className="pt-20 pb-10 px-10 text-center">
+          <div className="mb-6">
+            <h2 className="text-3xl font-black text-[#5D4037] mb-1">
+              {localUser.displayName}
+            </h2>
+            <p className="text-gray-400 flex items-center justify-center gap-1.5 text-sm font-medium">
+              <IoMailOutline className="text-[#E67E22]" /> {localUser.email}
+            </p>
+          </div>
+
+          <div className="mb-8">
+            {localUser.emailVerified ? (
+              <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-green-50 text-green-600 text-[10px] font-black uppercase tracking-widest border border-green-100 shadow-sm">
+                <IoShieldCheckmarkOutline size={14} /> Verified Member
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-red-50 text-red-600 text-[10px] font-black uppercase tracking-widest border border-red-100 shadow-sm">
+                Unverified Account
+              </span>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-4 text-left mb-10">
+            <div className="p-4 bg-orange-50/40 rounded-[1.5rem] border border-orange-100/50">
+              <p className="text-[10px] text-gray-400 font-black uppercase tracking-wider mb-1 flex items-center gap-1">
+                <IoCalendarOutline className="text-[#E67E22]" /> Joined
+              </p>
+              <p className="text-xs font-bold text-[#5D4037]">
+                {new Date(localUser.metadata.creationTime).toLocaleDateString(
+                  "en-GB",
+                  { day: "numeric", month: "short", year: "numeric" },
+                )}
+              </p>
+            </div>
+            <div className="p-4 bg-orange-50/40 rounded-[1.5rem] border border-orange-100/50">
+              <p className="text-[10px] text-gray-400 font-black uppercase tracking-wider mb-1 flex items-center gap-1">
+                <IoShieldCheckmarkOutline className="text-[#E67E22]" /> Status
+              </p>
+              <p className="text-xs font-bold text-[#5D4037]">Active User</p>
+            </div>
+          </div>
+
+          <div className="flex gap-4">
+            <button
+              onClick={handleEditProfile}
+              className="flex-[2] flex items-center justify-center gap-2 py-4 rounded-2xl bg-[#5D4037] text-white font-black text-xs hover:bg-[#E67E22] transition-all shadow-xl shadow-brown-100 active:scale-95 tracking-widest"
+            >
+              <IoCreateOutline size={18} /> EDIT PROFILE
+            </button>
+            <button
+              onClick={handleDelete}
+              className="flex-1 flex items-center justify-center py-4 rounded-2xl bg-white text-red-500 border-2 border-red-50 font-black text-sm hover:bg-red-50 transition-all active:scale-95"
+            >
+              <IoTrashOutline size={18} />
+            </button>
+          </div>
+
+          <p className="mt-8 text-[9px] text-gray-300 font-bold uppercase tracking-[0.2em]">
+            User ID: {localUser.uid.slice(0, 16)}...
+          </p>
         </div>
       </div>
     </div>

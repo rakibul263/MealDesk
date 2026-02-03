@@ -1,23 +1,36 @@
 import { Link } from "react-router";
+import { IoArrowBack, IoFastFoodOutline } from "react-icons/io5";
 
 const Error = () => {
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#E8E8E8] to-[#F5F5F5] px-6">
-      <div className="text-center max-w-md">
-        <h1 className="text-8xl font-extrabold text-gray-400 animate-bounce">
-          404
-        </h1>
-        <h2 className="text-3xl font-bold text-gray-700 mt-4">
-          Oops! Page Not Found
+    <div className="min-h-screen flex flex-col items-center justify-center bg-[#FFFBF0] px-6 relative overflow-hidden">
+      <div className="absolute top-[-10%] left-[-5%] w-64 h-64 bg-[#E67E22]/10 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-[-10%] right-[-5%] w-96 h-96 bg-[#5D4037]/5 rounded-full blur-3xl"></div>
+
+      <div className="text-center z-10">
+        <div className="relative inline-block">
+          <h1 className="text-[12rem] md:text-[15rem] font-black text-[#5D4037]/5 leading-none select-none">
+            404
+          </h1>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <IoFastFoodOutline className="text-8xl md:text-9xl text-[#E67E22] animate-bounce" />
+          </div>
+        </div>
+
+        <h2 className="text-4xl md:text-5xl font-black text-[#5D4037] -mt-8 mb-4">
+          Oops! Kitchen is Closed
         </h2>
-        <p className="text-gray-600 mt-2">
-          The page you are looking for does not exist or has been moved.
+        <p className="text-gray-500 max-w-sm mx-auto mb-10 text-lg font-light">
+          We couldn't find the page you're looking for. It might have been
+          removed or eaten!
         </p>
+
         <Link
           to="/"
-          className="mt-6 inline-block px-6 py-3 bg-[#896C6C] text-white rounded-full font-semibold hover:bg-[#7C5A5A] transition"
+          className="inline-flex items-center gap-3 px-10 py-4 bg-[#E67E22] text-white rounded-full font-bold text-lg shadow-xl shadow-orange-200 hover:bg-[#D35400] hover:scale-105 active:scale-95 transition-all group"
         >
-          Go Back Home
+          <IoArrowBack className="group-hover:-translate-x-1 transition-transform" />
+          Back to Menu
         </Link>
       </div>
     </div>

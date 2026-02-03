@@ -1,8 +1,15 @@
-import React, { use, useContext, useState } from "react";
+import React, { use, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import { AuthContext } from "../context/AuthContext";
 import Swal from "sweetalert2";
 import { updateProfile } from "firebase/auth";
+import {
+  IoPersonOutline,
+  IoMailOutline,
+  IoImageOutline,
+  IoLockClosedOutline,
+  IoChevronForwardOutline,
+} from "react-icons/io5";
 
 const Signup = () => {
   const [error, setError] = useState("");
@@ -26,16 +33,15 @@ const Signup = () => {
       setError("Password must be at least 6 characters long.");
       return;
     }
-
     if (!hasUppercase) {
       setError("Password must contain at least one uppercase letter.");
       return;
     }
-
     if (!hasLowercase) {
       setError("Password must contain at least one lowercase letter.");
       return;
     }
+
     createUser(email, password)
       .then((res) => {
         const user = res.user;
@@ -44,109 +50,179 @@ const Signup = () => {
           photoURL: photoURL,
         });
         verifiedEmail()
-          .then((res) => {
+          .then(() => {
             Swal.fire({
-              title: "Please Verify Your Account",
-              text: "We send a mail on your mail address.",
+              title: "Verify Your Account 📧",
+              text: "We've sent a verification link to your email address.",
               icon: "success",
+              confirmButtonColor: "#E67E22",
+              customClass: { popup: "rounded-[2rem]" },
             });
             navigate("/login");
           })
-          .catch((error) => {
+          .catch(() => {
             Swal.fire({
-              title: "Something want wrong",
+              title: "Verification Email Failed",
               icon: "error",
+              confirmButtonColor: "#5D4037",
             });
           });
       })
-      .catch((error) => {
+      .catch(() => {
         Swal.fire({
           icon: "error",
-          title: "Oops...",
-          text: "Something went wrong! Try Again.",
+          title: "Registration Failed",
+          text: "This email might already be in use.",
+          confirmButtonColor: "#5D4037",
         });
       });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="w-full max-w-md backdrop-blur-xl bg-white/70 rounded-2xl shadow-2xl border border-white/40">
-        <div className="text-center pt-8 px-8">
-          <h2 className="text-3xl font-semibold text-[#896C6C]">
-            Register MealDesk Account
-          </h2>
-          <p className="text-sm text-gray-500 mt-2">
-            Explore Delicious Moments
-          </p>
+    <div className="min-h-screen bg-[#FFFBF0] flex items-center justify-center p-6 lg:pt-32 pb-20">
+      <div className="w-full max-w-5xl bg-white rounded-[2.5rem] shadow-2xl shadow-orange-100/50 flex flex-col md:flex-row-reverse overflow-hidden border border-orange-50">
+        {/* Visual Side (Now on the Right for Signup) */}
+        <div className="md:w-5/12 bg-[#5D4037] p-12 flex flex-col justify-between relative overflow-hidden">
+          <div className="absolute -bottom-20 -right-20 w-64 h-64 bg-[#E67E22] rounded-full opacity-10 animate-pulse"></div>
+
+          <div className="relative z-10 text-right md:text-left">
+            <h1 className="text-white text-4xl font-black leading-tight mb-4">
+              Join the <br /> Foodie <br />{" "}
+              <span className="text-[#E67E22]">Community.</span>
+            </h1>
+            <p className="text-orange-100/60 text-sm font-medium leading-relaxed">
+              Create your account to unlock exclusive recipes, manage your meal
+              plans, and join thousands of food enthusiasts.
+            </p>
+          </div>
+
+          <div className="relative z-10 pt-10">
+            <div className="flex flex-col gap-4">
+              <div className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10">
+                <div className="w-10 h-10 bg-[#E67E22] rounded-xl flex items-center justify-center text-white font-bold">
+                  1
+                </div>
+                <p className="text-white text-xs font-bold">
+                  Register your account
+                </p>
+              </div>
+              <div className="flex items-center gap-3 bg-white/5 p-3 rounded-2xl border border-white/10">
+                <div className="w-10 h-10 bg-[#E67E22] rounded-xl flex items-center justify-center text-white font-bold">
+                  2
+                </div>
+                <p className="text-white text-xs font-bold">
+                  Verify your email address
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="px-8 py-6">
+        {/* Form Side */}
+        <div className="md:w-7/12 p-8 md:p-14">
+          <div className="mb-8">
+            <h2 className="text-3xl font-black text-[#5D4037]">
+              Create Account
+            </h2>
+            <p className="text-gray-400 text-sm mt-1">
+              Join MealDesk and start exploring
+            </p>
+          </div>
+
           <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label className="text-sm font-medium text-gray-600">Name</label>
-              <input
-                type="text"
-                name="name"
-                placeholder="Your full name"
-                required
-                className="mt-2 w-full px-4 py-3 rounded-xl border border-gray-300 bg-white/80 focus:outline-none focus:ring-2 focus:ring-[#EEE6CA]"
-              />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-[#5D4037] uppercase tracking-widest ml-1">
+                  Full Name
+                </label>
+                <div className="relative group">
+                  <IoPersonOutline
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#E67E22] transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="text"
+                    name="name"
+                    placeholder="Enter Your Name"
+                    required
+                    className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-stone-50 border-2 border-transparent focus:border-[#E67E22]/30 focus:bg-white focus:outline-none transition-all font-medium text-sm"
+                  />
+                </div>
+              </div>
+
+              <div className="space-y-1">
+                <label className="text-[10px] font-black text-[#5D4037] uppercase tracking-widest ml-1">
+                  Email Address
+                </label>
+                <div className="relative group">
+                  <IoMailOutline
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#E67E22] transition-colors"
+                    size={18}
+                  />
+                  <input
+                    type="email"
+                    name="email"
+                    placeholder="Your Email Address"
+                    required
+                    className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-stone-50 border-2 border-transparent focus:border-[#E67E22]/30 focus:bg-white focus:outline-none transition-all font-medium text-sm"
+                  />
+                </div>
+              </div>
             </div>
 
-            <div>
-              <label className="text-sm font-medium text-gray-600">Email</label>
-              <input
-                type="email"
-                name="email"
-                placeholder="Your Email Address"
-                required
-                className="mt-2 w-full px-4 py-3 rounded-xl border border-gray-300 bg-white/80 focus:outline-none focus:ring-2 focus:ring-[#EEE6CA]"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-medium text-gray-600">
-                Photo URL
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-[#5D4037] uppercase tracking-widest ml-1">
+                Profile Photo URL
               </label>
-              <input
-                type="text"
-                name="photoURL"
-                placeholder="https://example.com/photo.jpg"
-                className="mt-2 w-full px-4 py-3 rounded-xl border border-gray-300 bg-white/80 focus:outline-none focus:ring-2 focus:ring-[#EEE6CA]"
-              />
+              <div className="relative group">
+                <IoImageOutline
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#E67E22] transition-colors"
+                  size={18}
+                />
+                <input
+                  type="text"
+                  name="photoURL"
+                  placeholder="Your imgbb image link"
+                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-stone-50 border-2 border-transparent focus:border-[#E67E22]/30 focus:bg-white focus:outline-none transition-all font-medium text-sm"
+                />
+              </div>
             </div>
 
-            <div>
-              <label className="text-sm font-medium text-gray-600">
-                Password
+            <div className="space-y-1">
+              <label className="text-[10px] font-black text-[#5D4037] uppercase tracking-widest ml-1">
+                Security Password
               </label>
-              <input
-                type="password"
-                name="password"
-                placeholder="At least 6 characters"
-                required
-                className="mt-2 w-full px-4 py-3 rounded-xl border border-gray-300 bg-white/80 focus:outline-none focus:ring-2 focus:ring-[#EEE6CA]"
-              />
+              <div className="relative group">
+                <IoLockClosedOutline
+                  className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 group-focus-within:text-[#E67E22] transition-colors"
+                  size={18}
+                />
+                <input
+                  type="password"
+                  name="password"
+                  placeholder="••••••••"
+                  required
+                  className="w-full pl-11 pr-4 py-3.5 rounded-2xl bg-stone-50 border-2 border-transparent focus:border-[#E67E22]/30 focus:bg-white focus:outline-none transition-all font-medium text-sm"
+                />
+              </div>
             </div>
 
             {error && (
-              <p className="text-sm text-red-600 font-medium">{error}</p>
+              <div className="bg-red-50 text-red-600 text-[11px] font-bold p-3 rounded-xl border border-red-100 animate-shake">
+                ⚠️ {error}
+              </div>
             )}
 
-            <button
-              type="submit"
-              className="w-full py-3 rounded-xl bg-gradient-to-r from-[#DCE1CB] to-[#A3B18A] text-gray-800 font-semibold hover:bg-[#e2d9b8] transition duration-300 shadow-md cursor-pointer"
-            >
-              Sign Up
+            <button className="w-full bg-[#5D4037] hover:bg-[#E67E22] text-white py-4 rounded-2xl font-black text-sm uppercase tracking-widest transition-all shadow-xl shadow-brown-100 flex items-center justify-center gap-2 group mt-4">
+              Create My Account
+              <IoChevronForwardOutline className="group-hover:translate-x-1 transition-transform" />
             </button>
           </form>
-        </div>
 
-        <div className="text-center pb-6">
-          <p className="text-sm text-gray-600">
-            Already have an account?{" "}
-            <Link to="/login" className="font-medium hover:underline">
-              Login
+          <p className="mt-8 text-center text-sm font-bold text-gray-400">
+            Already part of the family?{" "}
+            <Link to="/login" className="text-[#E67E22] hover:underline ml-1">
+              Login here
             </Link>
           </p>
         </div>
