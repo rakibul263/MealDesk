@@ -78,12 +78,10 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {/* Center */}
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal gap-6">{links}</ul>
+          <ul className="menu menu-horizontal gap-1">{links}</ul>
         </div>
 
-        {/* Right */}
         <div className="navbar-end">
           {user?.emailVerified ? (
             <div className="dropdown dropdown-end">
