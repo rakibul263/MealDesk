@@ -1,5 +1,5 @@
-import React from "react";
-import { useLoaderData, Link } from "react-router";
+import React, { use } from "react";
+import { useLoaderData, Link, useNavigate, NavLink } from "react-router";
 import {
   IoTimerOutline,
   IoFlameOutline,
@@ -9,11 +9,20 @@ import {
   IoStar,
   IoPersonOutline,
   IoStorefrontOutline,
+  IoPencilOutline,
+  IoTrashOutline,
 } from "react-icons/io5";
+import { AuthContext } from "../context/AuthContext";
+import Swal from "sweetalert2";
+import axios from "axios";
 
 const FoodDetails = () => {
   const food = useLoaderData();
+  const { user } = use(AuthContext);
+  const navigate = useNavigate();
+
   const {
+    _id,
     foodName,
     foodImage,
     category,
@@ -30,6 +39,39 @@ const FoodDetails = () => {
     description,
     addedBy,
   } = food;
+
+  const isOwner = user?.email === addedBy?.email;
+  const isNotOwner = user?.email !== addedBy?.email;
+
+  const handleDelete = async (_id) => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#E67E22",
+      cancelButtonColor: "#5D4037",
+      confirmButtonText: "Yes, delete it!",
+      customClass: { popup: "rounded-[2rem]" },
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios.delete(
+            `${import.meta.env.VITE_API_URL}/deleteFood/${_id}`,
+          );
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your food has been removed.",
+            icon: "success",
+            confirmButtonColor: "#E67E22",
+          });
+          navigate("/foods");
+        } catch (error) {
+          Swal.fire("Error", "Could not delete the food item", "error");
+        }
+      }
+    });
+  };
 
   return (
     <div className="min-h-screen bg-[#FFFBF0] pt-28 pb-20 px-4">
@@ -51,6 +93,24 @@ const FoodDetails = () => {
           </div>
 
           <div className="w-full lg:w-1/2 p-8 md:p-12 lg:pl-4 flex flex-col justify-center">
+            {/* Owner Actions (Edit/Delete) */}
+            {isOwner && (
+              <div className="flex gap-3 mb-6">
+                <Link
+                  to={`/update-food/${_id}`}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-orange-50 text-[#E67E22] rounded-xl font-bold text-sm border border-orange-100 hover:bg-[#E67E22] hover:text-white transition-all"
+                >
+                  <IoPencilOutline size={18} /> Edit
+                </Link>
+                <button
+                  onClick={() => handleDelete(_id)}
+                  className="flex items-center gap-2 px-6 py-2.5 bg-red-50 text-red-500 rounded-xl font-bold text-sm border border-red-100 hover:bg-red-500 hover:text-white transition-all"
+                >
+                  <IoTrashOutline size={18} /> Delete
+                </button>
+              </div>
+            )}
+
             <div className="flex flex-wrap items-center gap-3 mb-4">
               <div className="flex items-center gap-1 bg-orange-100 text-[#E67E22] px-3 py-1 rounded-full text-sm font-bold">
                 <IoStar /> {rating}
@@ -75,6 +135,7 @@ const FoodDetails = () => {
               </p>
             </div>
 
+            {/* Features Grid */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 mb-10 p-6 bg-orange-50/50 rounded-[2rem] border border-orange-100/50">
               <div className="text-center">
                 <IoLeafOutline
@@ -137,23 +198,29 @@ const FoodDetails = () => {
               </div>
             </div>
 
-            <button className="group w-full h-16 bg-[#5D4037] hover:bg-[#E67E22] text-white rounded-2xl font-bold text-xl shadow-xl shadow-brown-100 hover:shadow-orange-200 transition-all duration-300 flex items-center justify-center gap-3 active:scale-[0.98]">
-              <IoCartOutline
-                size={26}
-                className="group-hover:rotate-12 transition-transform"
-              />
-              Purchase Now
-            </button>
+            {isNotOwner && (
+              <NavLink
+                to={_id ? `/purchase/${_id}` : "#"}
+                className="group w-full h-16 bg-[#5D4037] hover:bg-[#E67E22] text-white rounded-2xl font-bold text-xl shadow-xl shadow-brown-100 hover:shadow-orange-200 transition-all duration-300 flex items-center justify-center gap-3 active:scale-[0.98]"
+              >
+                <IoCartOutline
+                  size={26}
+                  className="group-hover:rotate-12 transition-transform"
+                />
+                Purchase Now
+              </NavLink>
+            )}
           </div>
         </div>
 
+        {/* Bottom Section */}
         <div className="p-8 md:p-12 bg-stone-50/50 border-t border-gray-100 flex flex-col md:flex-row gap-12">
           <div className="md:w-2/3">
             <h3 className="text-2xl font-black text-[#5D4037] mb-4 flex items-center gap-2">
               <span className="w-2 h-8 bg-[#E67E22] rounded-full"></span>
               The Story of this Dish
             </h3>
-            <p className="text-gray-500 leading-relaxed text-lg font-light italic">
+            <p className="text-gray-500 leading-relaxed text-lg font-light italic italic">
               "{description}"
             </p>
           </div>
@@ -178,7 +245,7 @@ const FoodDetails = () => {
         <div className="px-12 py-6 bg-white border-t border-gray-50 flex items-center justify-between">
           <p className="text-xs text-gray-400">
             Listed by:{" "}
-            <span className="text-[#E67E22] font-bold">{addedBy.name}</span>
+            <span className="text-[#E67E22] font-bold">{addedBy?.name}</span>
           </p>
           <Link
             to="/foods"

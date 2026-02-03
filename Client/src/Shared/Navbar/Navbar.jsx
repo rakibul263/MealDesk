@@ -15,7 +15,6 @@ const Navbar = () => {
     }
   };
 
-  // কালার স্কিম: Deep Orange-Red (#E67E22) এবং Dark Brown (#5D4037)
   const navLinkClass = ({ isActive }) =>
     isActive
       ? "text-[#E67E22] font-bold border-b-2 border-[#E67E22] pb-1"
@@ -38,11 +37,14 @@ const Navbar = () => {
           Gallery
         </NavLink>
       </li>
-      <li>
-        <NavLink to="/myFoods" className={navLinkClass}>
-          My Food
-        </NavLink>
-      </li>
+      {user && (
+        <li>
+          <NavLink to={`/myFoods/${user.email}`} className={navLinkClass}>
+            My Food
+          </NavLink>
+        </li>
+      )}
+
       <li>
         <NavLink to="/addFood" className={navLinkClass}>
           Add Food
