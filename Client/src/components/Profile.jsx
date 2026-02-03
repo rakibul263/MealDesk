@@ -1,11 +1,13 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, use } from "react";
 import { AuthContext } from "../context/AuthContext";
 import Swal from "sweetalert2";
 import { updateProfile } from "firebase/auth";
+import { useNavigate } from "react-router";
 
 const Profile = () => {
-  const { user, loading, refreshUser } = useContext(AuthContext);
+  const { user, loading, refreshUser, deleteUserAccount } = use(AuthContext);
   const [localUser, setLocalUser] = useState(null);
+  const Navigate = useNavigate();
 
   useEffect(() => {
     if (user) setLocalUser(user);
@@ -27,6 +29,7 @@ const Profile = () => {
         <input type="text" id="swal-photo" class="swal2-input" placeholder="Photo URL" value="${localUser.photoURL || ""}">
       `,
       showCancelButton: true,
+      confirmButtonColor: "#A3B18A",
       confirmButtonText: "Update",
       focusConfirm: false,
       preConfirm: () => {
@@ -59,6 +62,48 @@ const Profile = () => {
         });
       }
     }
+  };
+
+  const handleDelete = async () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      customClass: {
+        confirmButton:
+          "bg-gradient-to-r from-[#DCE1CB] to-[#A3B18A] text-white rounded-xl hover:scale-[1.02] transition-transform duration-300",
+        cancelButton:
+          "bg-red-500 text-white rounded-xl hover:bg-red-600 transition-colors duration-300",
+      },
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "Cancel",
+      reverseButtons: true,
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await deleteUserAccount(user);
+          Navigate("/");
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your account has been deleted.",
+            icon: "success",
+            customClass: {
+              popup: "rounded-3xl shadow-2xl",
+            },
+          });
+        } catch (error) {
+          Swal.fire({
+            title: "Error!",
+            text: "Something went wrong. Try again.",
+            icon: "error",
+            customClass: {
+              popup: "rounded-3xl shadow-2xl",
+            },
+          });
+        }
+      }
+    });
   };
 
   return (
@@ -119,12 +164,20 @@ const Profile = () => {
           </div>
         </div>
 
-        <button
-          className="mt-6 w-full py-2 rounded-xl bg-gradient-to-r from-[#DCE1CB] to-[#A3B18A] text-gray-800 font-semibold hover:scale-[1.02] transition-transform duration-300"
-          onClick={handleEditProfile}
-        >
-          Edit Profile
-        </button>
+        <div className="flex gap-3">
+          <button
+            className="mt-6 w-full py-2 rounded-xl bg-gradient-to-r from-[#DCE1CB] to-[#A3B18A] text-gray-800 font-semibold hover:scale-[1.02] transition-transform duration-300"
+            onClick={handleEditProfile}
+          >
+            Edit Profile
+          </button>
+          <button
+            className="mt-6 w-full py-2 rounded-xl bg-gradient-to-r from-[#A3B18A] to-[#DCE1CB]  text-gray-800 font-semibold hover:scale-[1.02] transition-transform duration-300"
+            onClick={handleDelete}
+          >
+            Delete Account
+          </button>
+        </div>
       </div>
     </div>
   );

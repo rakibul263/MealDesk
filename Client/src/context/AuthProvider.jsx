@@ -3,6 +3,7 @@ import { AuthContext } from "./AuthContext";
 import { auth } from "../firebase/firebase.init";
 import {
   createUserWithEmailAndPassword,
+  deleteUser,
   GoogleAuthProvider,
   onAuthStateChanged,
   sendEmailVerification,
@@ -38,7 +39,13 @@ const AuthProvider = ({ children }) => {
   };
 
   const resetPassword = (email) => {
+    setLoading(true);
     return sendPasswordResetEmail(auth, email);
+  };
+
+  const deleteUserAccount = (user) => {
+    setLoading(true);
+    return deleteUser(user);
   };
 
   const signOutUser = () => {
@@ -60,6 +67,7 @@ const AuthProvider = ({ children }) => {
     signInGoogle,
     verifiedEmail,
     resetPassword,
+    deleteUserAccount,
     signOutUser,
     loading,
     setLoading,
