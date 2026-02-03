@@ -6,6 +6,9 @@ import Signup from "../components/Signup";
 import AddFoodPage from "../components/AddFoodPage";
 import Profile from "../components/Profile";
 import Error from "../components/Error";
+import AllFood from "../components/AllFood";
+import FoodDetails from "../components/FoodDetails";
+import axios from "axios";
 
 const router = createBrowserRouter([
   {
@@ -31,6 +34,20 @@ const router = createBrowserRouter([
       {
         path: "profile",
         Component: Profile,
+      },
+      {
+        path: "foods",
+        Component: AllFood,
+      },
+      {
+        path: "foods/:id",
+        loader: async ({ params }) => {
+          const res = await axios(
+            `${import.meta.env.VITE_API_URL}/foods/${params.id}`,
+          );
+          return res.data;
+        },
+        Component: FoodDetails,
       },
       {
         path: "/*",
