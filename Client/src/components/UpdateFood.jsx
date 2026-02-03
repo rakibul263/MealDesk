@@ -30,7 +30,6 @@ const UpdateFood = () => {
     const formData = new FormData(form);
     const updatedInfo = Object.fromEntries(formData.entries());
 
-    // Data type conversion
     updatedInfo.price = parseFloat(updatedInfo.price);
     updatedInfo.quantity = parseInt(updatedInfo.quantity);
     updatedInfo.rating = parseFloat(updatedInfo.rating);
@@ -55,7 +54,8 @@ const UpdateFood = () => {
           confirmButtonColor: "#E67E22",
           customClass: { popup: "rounded-[2rem]" },
         });
-        navigate(`/food/${foodData._id}`);
+        // navigate(`/food/${foodData._id}`);
+        navigate("/foods");
       }
     } catch (err) {
       Swal.fire({
