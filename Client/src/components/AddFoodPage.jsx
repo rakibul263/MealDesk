@@ -73,9 +73,15 @@ const AddFoodPage = () => {
             />
 
             <input
+              value={user?.displayName}
+              disabled
+              className="input input-bordered rounded-xl bg-gray-100 text-gray-700"
+            />
+
+            <input
               value={user?.email}
               disabled
-              className="input input-bordered rounded-xl bg-gray-100 text-gray-700 w-full md:col-span-2"
+              className="input input-bordered rounded-xl bg-gray-100 text-gray-700"
             />
 
             <textarea

@@ -39,6 +39,7 @@ const Signup = () => {
       .then((res) => {
         const user = res.user;
         updateProfile(user, {
+          displayName: name,
           photoURL: photoURL,
         });
         Swal.fire({
