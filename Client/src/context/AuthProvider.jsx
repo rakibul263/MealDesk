@@ -13,10 +13,12 @@ import {
   signOut,
 } from "firebase/auth";
 
+// Provider-ti baire declare kora best practice
+const googleProvider = new GoogleAuthProvider();
+
 const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState();
-  const provider = new GoogleAuthProvider();
+  const [user, setUser] = useState(null);
 
   const createUser = (email, password) => {
     setLoading(true);
@@ -30,16 +32,16 @@ const AuthProvider = ({ children }) => {
 
   const signInGoogle = () => {
     setLoading(true);
-    return signInWithPopup(auth, provider);
+    // select_account dile protibar account choose korar option ashbe
+    googleProvider.setCustomParameters({ prompt: "select_account" });
+    return signInWithPopup(auth, googleProvider);
   };
 
   const verifiedEmail = () => {
-    setLoading(true);
     return sendEmailVerification(auth.currentUser);
   };
 
   const resetPassword = (email) => {
-    setLoading(true);
     return sendPasswordResetEmail(auth, email);
   };
 
@@ -54,7 +56,7 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const unSubscribe = onAuthStateChanged(auth, async (currentUser) => {
+    const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
       setUser(currentUser);
       setLoading(false);
     });
