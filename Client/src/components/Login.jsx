@@ -50,9 +50,9 @@ const Login = () => {
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "Error",
-        text: "Google Sign-in failed",
-        confirmButtonColor: "#E67E22",
+        title: "Google Login Failed",
+        text: error.message,
+        confirmButtonColor: "#5D4037",
       });
     }
   };

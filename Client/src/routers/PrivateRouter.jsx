@@ -1,6 +1,7 @@
 import React, { use } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Navigate, useLocation } from "react-router";
+import { IoFastFoodOutline } from "react-icons/io5";
 
 const PrivateRouter = ({ children }) => {
   const { user, loading } = use(AuthContext);

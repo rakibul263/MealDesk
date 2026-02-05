@@ -36,7 +36,6 @@ const MyOrderCard = ({ food }) => {
           );
           if (res.data.deletedCount > 0) {
             Swal.fire("Deleted!", "Your order has been cancelled.", "success");
-            window.location.reload();
           }
         } catch (error) {
           Swal.fire("Error", "Could not delete the order.", "error");
